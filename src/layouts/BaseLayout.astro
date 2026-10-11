@@ -1,0 +1,124 @@
+---
+import '../styles/global.css';
+import profile from '../data/profile.json';
+import Header from '../components/Header.astro';
+import StickyCTA from '../components/StickyCTA.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title = `${profile.name} | ${profile.role}`,
+  description = profile.subheadline,
+  ogImage = '/og-default.png',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogUrl = new URL(ogImage, Astro.site);
+const gaId = import.meta.env.PUBLIC_GA_ID;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e0e10" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script is:inline>document.documentElement.classList.add('js');</script>
+
+    {gaId && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+        <script is:inline define:vars={{ gaId }}>
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () { dataLayer.push(arguments); };
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      </>
+    )}
+  </head>
+  <body class="min-h-dvh pb-24 sm:pb-0">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 btn-primary">본문으로 건너뛰기</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="border-t border-line py-10 text-sm text-ink-3">
+      <div class="container-page flex flex-col gap-2 sm:flex-row sm:justify-between">
+        <p>© {new Date().getFullYear()} {profile.name}. 모든 수치는 각 프로젝트의 기간·역할 기준입니다.</p>
+        <p>최근 업데이트 {profile.lastUpdated}</p>
+      </div>
+    </footer>
+    <StickyCTA />
+
+    <script>
+      import { track } from '../lib/analytics';
+
+      const loadedAt = performance.now();
+
+      // 스크롤 진입 애니메이션 + 섹션 노출 이벤트(30초 동선 측정)
+      const seen = new Set<string>();
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const el = e.target as HTMLElement;
+            el.classList.add('is-visible');
+            const id = el.dataset.section;
+            if (id && !seen.has(id)) {
+              seen.add(id);
+              track('section_view', { section_id: id, time_since_load: Math.round((performance.now() - loadedAt) / 1000) });
+            }
+          }
+        },
+        { threshold: 0.3 },
+      );
+      document.querySelectorAll('[data-reveal], [data-section]').forEach((el) => io.observe(el));
+
+      // data-track 속성이 있는 링크/버튼 클릭 추적
+      document.addEventListener('click', (ev) => {
+        const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-track]');
+        if (!el) return;
+        track(el.dataset.track!, { cta_type: el.dataset.ctaType, location: el.dataset.location, case_slug: el.dataset.case });
+      });
+
+      // 이메일 원클릭 복사
+      document.querySelectorAll<HTMLButtonElement>('[data-copy-email]').forEach((btn) => {
+        btn.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          const email = btn.dataset.copyEmail!;
+          const label = btn.querySelector('[data-label]');
+          try {
+            await navigator.clipboard.writeText(email);
+            if (label) {
+              const prev = label.textContent;
+              label.textContent = '복사됨!';
+              setTimeout(() => (label.textContent = prev), 1600);
+            }
+            track('email_copy', { location: btn.dataset.location });
+          } catch {
+            location.href = `mailto:${email}`;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

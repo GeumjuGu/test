@@ -1,0 +1,25 @@
+---
+import profile from '../data/profile.json';
+const isHome = Astro.url.pathname === '/';
+const base = isHome ? '' : '/';
+---
+
+<header class="sticky top-0 z-40 border-b border-line/70 bg-bg/85 backdrop-blur">
+  <div class="container-page flex h-14 items-center justify-between">
+    <a href="/" class="font-bold tracking-tight">{profile.name}<span class="ml-2 hidden text-sm font-medium text-ink-3 sm:inline">{profile.role}</span></a>
+    <nav class="flex items-center gap-1 text-sm">
+      <a href={`${base}#work`} class="hidden rounded-full px-3 py-2 text-ink-2 hover:text-ink sm:inline">사례</a>
+      <a href={`${base}#services`} class="hidden rounded-full px-3 py-2 text-ink-2 hover:text-ink sm:inline">서비스</a>
+      <a href={`${base}#contact`} class="hidden rounded-full px-3 py-2 text-ink-2 hover:text-ink sm:inline">연락</a>
+      <a
+        href={profile.contact.calendar}
+        target="_blank"
+        rel="noopener"
+        class="btn-primary ml-2 !px-4 !py-2 !text-sm"
+        data-track="cta_click"
+        data-cta-type="booking"
+        data-location="header"
+      >미팅 예약</a>
+    </nav>
+  </div>
+</header>

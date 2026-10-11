@@ -1,0 +1,36 @@
+{
+  "name": "홍길동",
+  "role": "퍼포먼스 · 그로스 마케터",
+  "headline": "광고비는 그대로,\n매출은 2배.",
+  "subheadline": "D2C·SaaS 브랜드의 퍼포먼스 광고와 CRM 리텐션을 설계합니다. 7년간 27개 브랜드와 함께했습니다.",
+  "focus": ["퍼포먼스 광고", "CRM 리텐션", "GA4 데이터 분석"],
+  "availability": {
+    "available": true,
+    "label": "2026년 11월부터 신규 프로젝트 가능"
+  },
+  "photo": "/profile.svg",
+  "contact": {
+    "email": "hello@example.com",
+    "calendar": "https://cal.com/your-id/30min",
+    "kakao": "https://open.kakao.com/o/your-id",
+    "linkedin": "https://www.linkedin.com/in/your-id"
+  },
+  "formEndpoint": "",
+  "resumeUrl": "",
+  "showPricing": true,
+  "lastUpdated": "2026-10",
+  "variants": {
+    "beauty": {
+      "headline": "뷰티 D2C,\n광고비 동결로 매출 +158%.",
+      "subheadline": "뷰티·패션 D2C 브랜드의 Meta 광고 구조와 크리에이티브 테스트 체계를 설계합니다."
+    },
+    "saas": {
+      "headline": "SaaS 가입 단가,\n38% 낮췄습니다.",
+      "subheadline": "B2B·B2C SaaS의 유입부터 유료 전환까지, 퍼널 전체의 CAC를 함께 줄입니다."
+    },
+    "fnb": {
+      "headline": "식음료 재구매율,\n2.1배로 올렸습니다.",
+      "subheadline": "F&B 브랜드의 CRM 시나리오와 리텐션 캠페인으로 LTV를 키웁니다."
+    }
+  }
+}

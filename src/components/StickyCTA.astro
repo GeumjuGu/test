@@ -1,0 +1,21 @@
+---
+import profile from '../data/profile.json';
+---
+
+<!-- 모바일 하단 고정 CTA. 데스크톱에서는 헤더 버튼이 같은 역할을 합니다. -->
+<div class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg/95 px-4 py-3 backdrop-blur sm:hidden" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
+  <div class="flex gap-2">
+    <a
+      href={profile.contact.calendar}
+      target="_blank"
+      rel="noopener"
+      class="btn-primary flex-1"
+      data-track="cta_click"
+      data-cta-type="booking"
+      data-location="sticky"
+    >30분 무료 진단 예약</a>
+    <button type="button" class="btn-ghost" data-copy-email={profile.contact.email} data-location="sticky" aria-label="이메일 주소 복사">
+      <span data-label>이메일 복사</span>
+    </button>
+  </div>
+</div>

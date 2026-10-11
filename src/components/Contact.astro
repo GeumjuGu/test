@@ -1,0 +1,94 @@
+---
+import profile from '../data/profile.json';
+const c = profile.contact;
+const budgets = ['300만원 미만', '300–1,000만원', '1,000만원 이상', '아직 미정'];
+---
+
+<section id="contact" class="container-page scroll-mt-20 py-16 sm:py-24" data-section="contact">
+  <div class="grid gap-10 sm:grid-cols-2">
+    <div>
+      <p class="eyebrow">Contact</p>
+      <h2 class="section-title">광고비가 어디서 새는지<br />30분 안에 같이 찾아봐요.</h2>
+      <p class="mt-4 leading-7 text-ink-2">현재 상황을 듣고, 바로 적용할 수 있는 개선 포인트 3가지를 무료로 정리해 드립니다.</p>
+      <div class="mt-8 flex flex-col gap-3">
+        <a href={c.calendar} target="_blank" rel="noopener" class="btn-primary" data-track="cta_click" data-cta-type="booking" data-location="contact">📅 30분 무료 진단 미팅 예약</a>
+        <button type="button" class="btn-ghost" data-copy-email={c.email} data-location="contact">
+          ✉️ <span data-label>{c.email}</span>
+        </button>
+        <div class="flex gap-3">
+          <a href={c.kakao} target="_blank" rel="noopener" class="btn-ghost flex-1" data-track="cta_click" data-cta-type="kakao" data-location="contact">카카오톡</a>
+          <a href={c.linkedin} target="_blank" rel="noopener" class="btn-ghost flex-1" data-track="cta_click" data-cta-type="linkedin" data-location="contact">LinkedIn</a>
+        </div>
+        {profile.resumeUrl && (
+          <a href={profile.resumeUrl} download class="text-sm font-semibold text-ink-2 underline underline-offset-4" data-track="resume_download" data-location="contact">이력서 PDF 다운로드</a>
+        )}
+      </div>
+    </div>
+
+    <form
+      class="rounded-2xl border border-line bg-surface p-6"
+      action={profile.formEndpoint || `mailto:${c.email}`}
+      method="POST"
+      enctype={profile.formEndpoint ? undefined : 'text/plain'}
+      data-contact-form
+      data-endpoint={profile.formEndpoint}
+    >
+      <h3 class="font-bold">간단 문의</h3>
+      <div class="mt-4 space-y-4 text-sm">
+        <label class="block">
+          <span class="font-medium">이름</span>
+          <input name="name" required autocomplete="name" class="mt-1.5 w-full rounded-lg border border-line bg-bg px-3 py-2.5" />
+        </label>
+        <label class="block">
+          <span class="font-medium">회사 / 이메일</span>
+          <input name="email" type="email" required autocomplete="email" placeholder="답변받을 이메일" class="mt-1.5 w-full rounded-lg border border-line bg-bg px-3 py-2.5" />
+        </label>
+        <fieldset>
+          <legend class="font-medium">월 마케팅 예산</legend>
+          <div class="mt-1.5 grid grid-cols-2 gap-2">
+            {budgets.map((b, i) => (
+              <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2.5 has-[:checked]:border-accent has-[:checked]:bg-accent-soft">
+                <input type="radio" name="budget" value={b} checked={i === 3} class="accent-[var(--accent)]" />{b}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <label class="block">
+          <span class="font-medium">문의 내용</span>
+          <textarea name="message" rows="4" required placeholder="현재 고민, 목표 KPI 등을 자유롭게 적어주세요." class="mt-1.5 w-full rounded-lg border border-line bg-bg px-3 py-2.5"></textarea>
+        </label>
+        <!-- 스팸 방지 honeypot -->
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+        <button type="submit" class="btn-primary w-full">보내기</button>
+        <p class="text-center text-ink-3" data-form-status role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  import { track } from '../lib/analytics';
+
+  // formEndpoint(Formspree 등)가 있으면 페이지 이동 없이 전송합니다.
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  const status = form?.querySelector<HTMLElement>('[data-form-status]');
+  form?.addEventListener('submit', async (ev) => {
+    const endpoint = form.dataset.endpoint;
+    const budget = (form.elements.namedItem('budget') as RadioNodeList | null)?.value;
+    if (!endpoint) {
+      track('form_submit', { budget_range: budget, method: 'mailto' });
+      return;
+    }
+    ev.preventDefault();
+    status!.textContent = '보내는 중…';
+    try {
+      const res = await fetch(endpoint, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      status!.textContent = '감사합니다! 24시간 안에 답변드릴게요.';
+      track('form_submit', { budget_range: budget, method: 'endpoint' });
+    } catch {
+      status!.textContent = '전송에 실패했어요. 이메일로 연락 부탁드립니다.';
+    }
+  });
+</script>

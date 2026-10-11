@@ -1,0 +1,45 @@
+---
+import metrics from '../data/metrics.json';
+---
+
+<section class="border-y border-line bg-surface" aria-labelledby="impact-title" data-section="impact">
+  <h2 id="impact-title" class="sr-only">핵심 성과</h2>
+  <dl class="container-page grid grid-cols-2 gap-x-4 gap-y-8 py-10 sm:grid-cols-4 sm:py-12">
+    {metrics.map((m, i) => (
+      <div data-reveal style={`transition-delay:${i * 80}ms`}>
+        <dt class="sr-only">{m.label}</dt>
+        <dd class="text-[34px] leading-none font-extrabold tracking-tight text-accent tabular-nums sm:text-5xl">
+          {m.prefix}<span data-count={m.value}>{m.value}</span>{m.suffix}
+        </dd>
+        <dd class="mt-2 text-[15px] font-semibold">{m.label}</dd>
+        <dd class="mt-1 text-xs leading-5 text-ink-3">{m.note}</dd>
+      </div>
+    ))}
+  </dl>
+</section>
+
+<script>
+  // 숫자 카운트업. 모션 축소 설정이면 최종 값을 그대로 둡니다.
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll<HTMLElement>('[data-count]');
+  if (!reduce) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        io.unobserve(e.target);
+        const el = e.target as HTMLElement;
+        const end = Number(el.dataset.count);
+        const dur = 1100;
+        const t0 = performance.now();
+        const step = (t: number) => {
+          const p = Math.min(1, (t - t0) / dur);
+          el.textContent = String(Math.round(end * (1 - Math.pow(1 - p, 3))));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        el.textContent = '0';
+        requestAnimationFrame(step);
+      }
+    }, { threshold: 0.6 });
+    els.forEach((el) => io.observe(el));
+  }
+</script>

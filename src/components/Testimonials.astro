@@ -1,0 +1,22 @@
+---
+import testimonials from '../data/testimonials.json';
+---
+
+{testimonials.length > 0 && (
+  <section class="border-y border-line bg-surface" data-section="testimonials">
+    <div class="container-page py-16 sm:py-20">
+      <p class="eyebrow">Testimonials</p>
+      <h2 class="section-title">함께한 분들의 이야기</h2>
+      <div class="mt-8 grid gap-4 sm:grid-cols-2">
+        {testimonials.map((t) => (
+          <figure class="rounded-2xl border border-line bg-bg p-6" data-reveal>
+            <blockquote class="text-[17px] leading-8">“{t.quote}”</blockquote>
+            <figcaption class="mt-4 text-sm text-ink-3">
+              <span class="font-semibold text-ink">{t.name}</span> · {t.title}, {t.company}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+)}

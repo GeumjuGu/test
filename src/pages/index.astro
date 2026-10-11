@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ImpactBar from '../components/ImpactBar.astro';
+import CaseCard from '../components/CaseCard.astro';
+import Services from '../components/Services.astro';
+import Skills from '../components/Skills.astro';
+import Process from '../components/Process.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Contact from '../components/Contact.astro';
+import profile from '../data/profile.json';
+
+const featured = (await getCollection('cases', ({ data }) => data.featured)).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout>
+  <Hero />
+  <ImpactBar />
+
+  <section id="work" class="container-page scroll-mt-20 py-16 sm:py-20" data-section="work">
+    <p class="eyebrow">Selected Work</p>
+    <h2 class="section-title">숫자로 증명한 대표 사례</h2>
+    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-case-grid>
+      {featured.map((entry, i) => <CaseCard entry={entry} position={i + 1} />)}
+    </div>
+  </section>
+
+  <Services />
+  <Skills />
+  <Process />
+  <Testimonials />
+  <Contact />
+</BaseLayout>
+
+<script define:vars={{ variants: profile.variants }}>
+  // 업종별 맞춤 링크: ?for=beauty 처럼 보내면 헤드라인과 사례 순서가 해당 업종에 맞게 바뀝니다.
+  const key = new URLSearchParams(location.search).get('for');
+  const v = key && variants[key];
+  if (v) {
+    const [l1, l2] = v.headline.split('\n');
+    const h = document.querySelector('[data-headline]');
+    if (h) {
+      h.textContent = l1;
+      h.append(document.createElement('br'));
+      const span = document.createElement('span');
+      span.className = 'text-accent';
+      span.textContent = l2 ?? '';
+      h.append(span);
+    }
+    const sub = document.querySelector('[data-subheadline]');
+    if (sub) sub.textContent = v.subheadline;
+    const grid = document.querySelector('[data-case-grid]');
+    grid?.querySelectorAll(`[data-industry="${key}"]`).forEach((card) => grid.prepend(card));
+    window.gtag?.('event', 'utm_variant', { for: key });
+  }
+</script>

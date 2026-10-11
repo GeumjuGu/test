@@ -1,0 +1,23 @@
+[
+  { "category": "광고 매체", "items": [
+    { "name": "Meta Ads", "detail": "7년 · 월 최대 2억 운영" },
+    { "name": "Google Ads", "detail": "6년 · 검색/PMax/YouTube" },
+    { "name": "카카오모먼트", "detail": "4년" },
+    { "name": "네이버 검색광고", "detail": "5년" }
+  ]},
+  { "category": "분석 · 측정", "items": [
+    { "name": "GA4 / GTM", "detail": "이벤트 설계·구현" },
+    { "name": "Amplitude", "detail": "퍼널·코호트 분석" },
+    { "name": "Looker Studio", "detail": "자동화 대시보드" },
+    { "name": "SQL (BigQuery)", "detail": "중급" }
+  ]},
+  { "category": "CRM · 리텐션", "items": [
+    { "name": "Braze", "detail": "시나리오 설계" },
+    { "name": "채널톡", "detail": "마케팅 자동화" },
+    { "name": "카카오 알림톡", "detail": "세그먼트 발송" }
+  ]},
+  { "category": "자동화 · AI", "items": [
+    { "name": "Zapier / Make", "detail": "리포트 자동화" },
+    { "name": "생성형 AI", "detail": "크리에이티브 변형 제작" }
+  ]}
+]

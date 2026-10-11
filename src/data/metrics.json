@@ -1,0 +1,6 @@
+[
+  { "value": 42, "prefix": "₩", "suffix": "억+", "label": "누적 운영 광고비", "note": "2019–2026, 직접 운영한 계정 기준" },
+  { "value": 420, "prefix": "", "suffix": "%", "label": "평균 ROAS", "note": "최근 12개월 리테이너 고객 6곳 가중평균" },
+  { "value": 38, "prefix": "-", "suffix": "%", "label": "평균 CAC 절감", "note": "투입 전 3개월 대비 투입 후 3개월" },
+  { "value": 27, "prefix": "", "suffix": "개", "label": "협업 브랜드", "note": "인하우스·에이전시·프리랜스 합산" }
+]

@@ -1,0 +1,47 @@
+---
+import profile from '../data/profile.json';
+const [line1, line2] = profile.headline.split('\n');
+---
+
+<section class="container-page pt-10 pb-12 sm:pt-20 sm:pb-16" data-section="hero">
+  <div class="flex flex-col-reverse gap-8 sm:flex-row sm:items-center sm:justify-between">
+    <div class="max-w-2xl">
+      {profile.availability.available && (
+        <p class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-[13px] font-medium text-ink-2">
+          <span class="relative flex size-2">
+            <span class="absolute inline-flex size-full animate-ping rounded-full bg-good opacity-60"></span>
+            <span class="relative inline-flex size-2 rounded-full bg-good"></span>
+          </span>
+          {profile.availability.label}
+        </p>
+      )}
+      <h1 class="mt-5 text-[40px] leading-[1.15] font-extrabold tracking-[-0.03em] sm:text-6xl" data-headline>
+        {line1}<br /><span class="text-accent">{line2}</span>
+      </h1>
+      <p class="mt-5 max-w-xl text-[17px] leading-7 text-ink-2 sm:text-lg" data-subheadline>{profile.subheadline}</p>
+      <ul class="mt-5 flex flex-wrap gap-2" aria-label="전문 분야">
+        {profile.focus.map((f) => <li class="tag !bg-accent-soft !text-ink">{f}</li>)}
+      </ul>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a
+          href={profile.contact.calendar}
+          target="_blank"
+          rel="noopener"
+          class="btn-primary"
+          data-track="cta_click"
+          data-cta-type="booking"
+          data-location="hero"
+        >30분 무료 진단 미팅 예약 →</a>
+        <a href="#work" class="btn-ghost">대표 사례 보기 ↓</a>
+      </div>
+    </div>
+    <img
+      src={profile.photo}
+      alt={`${profile.name} 프로필 사진`}
+      width="160"
+      height="160"
+      fetchpriority="high"
+      class="hidden size-40 rounded-full border border-line bg-surface-2 object-cover sm:block"
+    />
+  </div>
+</section>

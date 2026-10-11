@@ -1,0 +1,31 @@
+---
+import skills from '../data/skills.json';
+import certs from '../data/certifications.json';
+---
+
+<section class="border-y border-line bg-surface" data-section="skills">
+  <div class="container-page py-16 sm:py-20">
+    <p class="eyebrow">Toolkit</p>
+    <h2 class="section-title">다루는 채널과 도구</h2>
+    <div class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {skills.map((g) => (
+        <div data-reveal>
+          <h3 class="text-sm font-semibold text-ink-3">{g.category}</h3>
+          <ul class="mt-3 space-y-3">
+            {g.items.map((i) => (
+              <li>
+                <p class="font-semibold">{i.name}</p>
+                <p class="text-sm text-ink-3">{i.detail}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+    {certs.length > 0 && (
+      <ul class="mt-10 flex flex-wrap gap-2" aria-label="보유 자격">
+        {certs.map((c) => <li class="tag border border-line !bg-bg">🏅 {c}</li>)}
+      </ul>
+    )}
+  </div>
+</section>

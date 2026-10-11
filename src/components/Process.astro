@@ -1,0 +1,18 @@
+---
+import process from '../data/process.json';
+---
+
+<section class="container-page py-16 sm:py-20" data-section="process">
+  <p class="eyebrow">How I Work</p>
+  <h2 class="section-title">협업 방식</h2>
+  <ol class="mt-8 grid gap-4 sm:grid-cols-4">
+    {process.map((p, i) => (
+      <li class="rounded-2xl border border-line bg-surface p-5" data-reveal>
+        <span class="text-sm font-bold text-accent tabular-nums">0{i + 1}</span>
+        <h3 class="mt-2 font-bold">{p.step}</h3>
+        <p class="mt-1 text-sm leading-6 text-ink-2">{p.desc}</p>
+      </li>
+    ))}
+  </ol>
+  <p class="mt-6 text-sm text-ink-3">슬랙·노션으로 협업하며, 평일 기준 24시간 안에 답변드립니다.</p>
+</section>

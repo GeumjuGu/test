@@ -1,0 +1,98 @@
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+@import 'tailwindcss';
+
+/* 색상 토큰: 포인트 컬러(accent)는 성과 수치와 CTA에만 사용합니다. */
+:root {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --surface-2: #f2f2f0;
+  --ink: #111113;
+  --ink-2: #4a4a52;
+  --ink-3: #75757e;
+  --line: #e4e4e0;
+  --accent: #2346f5;
+  --accent-ink: #ffffff;
+  --accent-soft: #e8ecff;
+  --good: #0f7b4a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e0e10;
+    --surface: #17171a;
+    --surface-2: #1f1f23;
+    --ink: #f4f4f5;
+    --ink-2: #c2c2c8;
+    --ink-3: #8e8e96;
+    --line: #2a2a2f;
+    --accent: #7c93ff;
+    --accent-ink: #0b0b0d;
+    --accent-soft: #1d2340;
+    --good: #4fd394;
+  }
+}
+
+@theme inline {
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-good: var(--good);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    word-break: keep-all;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+}
+
+@utility container-page { @apply mx-auto w-full max-w-5xl px-4 sm:px-6; }
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[15px] font-semibold transition-colors; }
+@utility btn-primary { @apply btn bg-accent text-accent-ink hover:opacity-90; }
+@utility btn-ghost { @apply btn border border-line text-ink hover:bg-surface-2; }
+@utility eyebrow { @apply text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-3; }
+@utility section-title { @apply mt-2 text-2xl font-bold tracking-tight sm:text-3xl; }
+@utility tag { @apply inline-flex items-center rounded-full bg-surface-2 px-2.5 py-1 text-xs font-medium text-ink-2; }
+
+/* 스크롤 진입 애니메이션: JS가 없거나 모션 축소 설정이면 그대로 보입니다. */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.js [data-reveal].is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1; transform: none; }
+}
+
+/* 케이스 상세 본문 */
+.prose-case h2 { @apply mt-12 mb-4 text-xl font-bold tracking-tight sm:text-2xl; }
+.prose-case p { @apply my-4 leading-8 text-ink-2; }
+.prose-case ul, .prose-case ol { @apply my-4 space-y-2 pl-5 leading-7 text-ink-2; }
+.prose-case ul { list-style: disc; }
+.prose-case ol { list-style: decimal; }
+.prose-case strong { @apply font-semibold text-ink; }

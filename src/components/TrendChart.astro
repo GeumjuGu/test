@@ -1,0 +1,53 @@
+---
+// 빌드 시점에 SVG로 그리는 단일 시리즈 라인 차트 (런타임 JS 없음)
+interface Props {
+  label: string;
+  unit: string;
+  points: { x: string; y: number }[];
+  startAt?: number;
+}
+const { label, unit, points, startAt } = Astro.props;
+
+const W = 640, H = 260, padL = 16, padR = 64, padT = 24, padB = 36;
+const ys = points.map((p) => p.y);
+const min = Math.min(...ys), max = Math.max(...ys);
+const span = max - min || 1;
+const lo = min - span * 0.15, hi = max + span * 0.15;
+const x = (i: number) => padL + (i * (W - padL - padR)) / (points.length - 1);
+const y = (v: number) => padT + (1 - (v - lo) / (hi - lo)) * (H - padT - padB);
+const path = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.y).toFixed(1)}`).join(' ');
+const area = `${path} L${x(points.length - 1).toFixed(1)},${H - padB} L${x(0).toFixed(1)},${H - padB} Z`;
+const first = points[0], last = points[points.length - 1];
+const fmt = (v: number) => `${v.toLocaleString('ko-KR')}${unit}`;
+---
+
+<figure class="rounded-2xl border border-line bg-surface p-5">
+  <figcaption class="flex items-baseline justify-between text-sm">
+    <span class="font-semibold">{label} 추이</span>
+    <span class="text-ink-3">{first.x} – {last.x}</span>
+  </figcaption>
+  <svg viewBox={`0 0 ${W} ${H}`} class="mt-3 h-auto w-full" role="img" aria-label={`${label}: ${points.map((p) => `${p.x} ${fmt(p.y)}`).join(', ')}`}>
+    <defs>
+      <linearGradient id="trend-fill" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.18" />
+        <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+    <line x1={padL} x2={W - padR} y1={H - padB} y2={H - padB} stroke="var(--line)" />
+    {startAt !== undefined && startAt < points.length && (
+      <g>
+        <line x1={x(startAt)} x2={x(startAt)} y1={padT - 8} y2={H - padB} stroke="var(--ink-3)" stroke-dasharray="3 4" />
+        <text x={x(startAt) + 6} y={padT} font-size="12" fill="var(--ink-3)">투입 시작</text>
+      </g>
+    )}
+    <path d={area} fill="url(#trend-fill)" />
+    <path d={path} fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+    {points.map((p, i) => (
+      <text x={x(i)} y={H - padB + 20} font-size="12" text-anchor="middle" fill="var(--ink-3)">{p.x}</text>
+    ))}
+    <circle cx={x(0)} cy={y(first.y)} r="4" fill="var(--surface)" stroke="var(--ink-3)" stroke-width="2" />
+    <text x={x(0)} y={y(first.y) - 12} font-size="13" fill="var(--ink-2)">{fmt(first.y)}</text>
+    <circle cx={x(points.length - 1)} cy={y(last.y)} r="5" fill="var(--accent)" />
+    <text x={x(points.length - 1) + 10} y={y(last.y) + 5} font-size="15" font-weight="700" fill="var(--accent)">{fmt(last.y)}</text>
+  </svg>
+</figure>

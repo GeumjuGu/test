@@ -1,0 +1,63 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TrendChart from '../../components/TrendChart.astro';
+import profile from '../../data/profile.json';
+
+export async function getStaticPaths() {
+  const cases = (await getCollection('cases')).sort((a, b) => a.data.order - b.data.order);
+  return cases.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, next: cases[(i + 1) % cases.length] },
+  }));
+}
+
+interface Props { entry: CollectionEntry<'cases'>; next: CollectionEntry<'cases'> }
+const { entry, next } = Astro.props;
+const c = entry.data;
+const { Content } = await render(entry);
+---
+
+<BaseLayout title={`${c.title} | ${profile.name}`} description={`${c.client} · ${c.problem} → ${c.result}`}>
+  <article class="container-page max-w-3xl py-10 sm:py-16">
+    <a href="/#work" class="text-sm font-semibold text-ink-3 hover:text-ink">← 모든 사례</a>
+    <div class="mt-6 flex flex-wrap gap-1.5">
+      {c.channels.map((ch) => <span class="tag">{ch}</span>)}
+    </div>
+    <h1 class="mt-4 text-3xl leading-tight font-extrabold tracking-tight sm:text-5xl">{c.title}</h1>
+    <dl class="mt-6 grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+      <div><dt class="text-ink-3">클라이언트</dt><dd class="mt-0.5 font-medium">{c.client}</dd></div>
+      <div><dt class="text-ink-3">기간</dt><dd class="mt-0.5 font-medium">{c.period}</dd></div>
+      <div><dt class="text-ink-3">역할</dt><dd class="mt-0.5 font-medium">{c.role}</dd></div>
+    </dl>
+
+    <div class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      {c.keyMetrics.map((m) => (
+        <div class="rounded-2xl border border-line bg-surface p-5">
+          <p class="text-sm text-ink-3">{m.label}</p>
+          <p class="mt-2 text-sm text-ink-3 line-through decoration-ink-3/50">{m.before}</p>
+          <p class="text-3xl font-extrabold tracking-tight text-accent">{m.after}</p>
+        </div>
+      ))}
+    </div>
+
+    {c.trend && <div class="mt-6"><TrendChart {...c.trend} /></div>}
+
+    <div class="prose-case mt-4">
+      <Content />
+    </div>
+
+    <aside class="mt-16 rounded-2xl bg-accent-soft p-6 sm:p-8">
+      <p class="text-lg font-bold">비슷한 고민이 있으신가요?</p>
+      <p class="mt-1 text-ink-2">30분이면 현재 상황에서 바로 적용할 개선 포인트를 찾을 수 있어요.</p>
+      <a href={profile.contact.calendar} target="_blank" rel="noopener" class="btn-primary mt-5" data-track="cta_click" data-cta-type="booking" data-location={`case_${entry.id}`}>무료 진단 미팅 예약 →</a>
+    </aside>
+
+    {next.id !== entry.id && (
+      <a href={`/work/${next.id}/`} class="mt-8 block rounded-2xl border border-line p-6 hover:bg-surface" data-track="case_open" data-case={next.id} data-location="next">
+        <p class="text-sm text-ink-3">다음 사례</p>
+        <p class="mt-1 text-lg font-bold">{next.data.title} →</p>
+      </a>
+    )}
+  </article>
+</BaseLayout>
